@@ -29,15 +29,19 @@ def webhook():
         # Parse the incoming message
         data = request.get_data().decode('utf-8')
         message = parse_message_from_agent(data)
-        survey_responses = message.payload.get("survey_responses", "")
+        survey_responses = message.payload.get("surveyResponses", "")
+        logger.info("Successfully accessed surveyresponses")
         agent_address = message.sender
 
+        logger.info("Done message.sender")
         if not survey_responses:
+            logger.info("1")
             return jsonify({"status": "error", "message": "No survey responses provided"}), 400
 
         # Generate profile from survey responses
         profile = generate_profile(survey_responses)
 
+        logger.info("profile generated")
         # Send the profile back to the client
         payload = {'profile': profile}
         send_message_to_agent(
@@ -54,11 +58,13 @@ def webhook():
 def generate_profile(survey_responses):
     """Generate a user profile based on survey responses."""
     try:
+        logger.info("2")
         # Use OpenAI API to generate a profile
         prompt = (
             f"Given the following survey responses: {json.dumps(survey_responses)}, "
             "generate a comprehensive user profile summarizing their preferences, behaviors, and characteristics."
         )
+        logger.info("3")
         response = openai.ChatCompletion.create(
             model="gpt-4o",
             messages=[
@@ -67,7 +73,9 @@ def generate_profile(survey_responses):
             ],
             temperature=0.7
         )
+        logger.info("4")
         profile = response.choices[0].message.content.strip()
+        logger.info("5")
         logger.info(f"Generated profile: {profile}")
         return profile
     except Exception as e:

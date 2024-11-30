@@ -66,7 +66,7 @@ def search_agents():
     """Search for available profiling agents."""
     try:
         # Fetch available profiling agents
-        available_ais = fetch.ai('This agent creates user profiles from survey responses.')
+        available_ais = fetch.ai('User Profiling Agent that creates profiles from survey responses.')
         agents = available_ais.get('ais', [])
 
         extracted_data = []
